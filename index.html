@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pediatric Massive Blood Loss</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+:root{
+  --navy-950:#030b1a; --navy-900:#061430; --navy-800:#0b2147;
+  --red:#d3142f; --red-hi:#ff3d55; --gold:#e7bd6a; --gold-hi:#ffe2a3;
+  --ice:#d6e6ff; --ice-dim:#8fa8cf; --cyan:#3fd6ff; --green:#39e58c; --yellow:#ffd23f; --pink:#ff8fd0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#000;overflow:hidden}
+body{font-family:'Sarabun','Tahoma',sans-serif;color:var(--ice)}
+b{font-weight:600}
+#deck{position:fixed;inset:0;background:#000}
+.s{position:absolute;left:50%;top:50%;width:1920px;height:1080px;overflow:hidden;opacity:0;pointer-events:none;
+  transition:opacity .45s ease;
+  background:radial-gradient(ellipse 80% 70% at 70% 30%, #12325f 0%, var(--navy-900) 55%, var(--navy-950) 100%);}
+.s.active{opacity:1;pointer-events:auto}
+.s::before{content:"";position:absolute;inset:0;pointer-events:none;background:
+  radial-gradient(circle at 12% 88%, rgba(211,20,47,.22), transparent 40%),
+  radial-gradient(circle at 95% 8%, rgba(63,214,255,.09), transparent 35%)}
+.s.part,.s.dark-red{background:radial-gradient(ellipse 70% 80% at 75% 50%, #2a0a14 0%, #0b1530 55%, #030b1a 100%)}
+.s.cover{background:#000}.s.cover::before{display:none}
+.abs{position:absolute}
+/* heading */
+.head{position:absolute;left:80px;top:66px;right:80px}
+.kicker{font-family:'Prompt';font-weight:500;letter-spacing:.3em;font-size:22px;color:var(--gold);text-transform:uppercase}
+.h1{font-family:'Prompt';font-weight:700;font-size:62px;line-height:1.18;color:#fff;margin-top:10px}
+.h1 em{font-style:normal;background:linear-gradient(90deg,var(--gold-hi),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.rule{height:4px;width:140px;border-radius:4px;background:linear-gradient(90deg,var(--red),var(--gold));margin-top:20px}
+.foot{position:absolute;left:80px;right:80px;bottom:30px;display:flex;justify-content:space-between;font-family:'Prompt';font-size:17px;color:var(--ice-dim);letter-spacing:.1em;pointer-events:none}
+.foot i{font-style:normal;color:var(--red-hi)}
+/* components */
+.glass{background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.14);border-radius:24px;box-shadow:0 20px 60px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.12)}
+.photo{position:absolute;border-radius:24px;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.12)}
+.photo img{display:block;width:100%;height:100%;object-fit:cover}
+.photo::after{content:"";position:absolute;inset:0;border-radius:24px;box-shadow:inset 0 0 0 2px rgba(231,189,106,.35);pointer-events:none}
+.pill{display:inline-flex;align-items:center;gap:10px;font-family:'Prompt';font-weight:600;font-size:22px;padding:8px 24px;border-radius:999px;white-space:nowrap}
+.pill.red{background:var(--red);color:#fff}
+.pill.gold{background:rgba(231,189,106,.14);color:var(--gold-hi);border:1px solid rgba(231,189,106,.5)}
+.pill.green{background:rgba(57,229,140,.12);color:#8ff5c0;border:1px solid rgba(57,229,140,.45)}
+.pill.cyan{background:rgba(63,214,255,.12);color:#9be9ff;border:1px solid rgba(63,214,255,.45)}
+.pearl{display:flex;align-items:center;gap:22px;padding:22px 28px;border-radius:22px;background:linear-gradient(90deg,rgba(211,20,47,.35),rgba(211,20,47,.08));border-left:6px solid var(--red-hi);font-size:29px;color:#fff;font-weight:500;line-height:1.35}
+.pearl.green{background:linear-gradient(90deg,rgba(57,229,140,.2),rgba(57,229,140,.04));border-left-color:var(--green)}
+.pearl.gold{background:linear-gradient(90deg,rgba(231,189,106,.22),rgba(231,189,106,.04));border-left-color:var(--gold)}
+.hl{color:var(--gold-hi)} .hr{color:var(--red-hi)} .hg{color:#8ff5c0} .hc{color:#9be9ff}
+.num{font-family:'Playfair Display';font-weight:800;color:var(--gold)}
+.serif{font-family:'Playfair Display';font-style:italic}
+.list{list-style:none;display:flex;flex-direction:column;gap:12px}
+.list li{position:relative;padding-left:34px;font-size:26px;line-height:1.38;color:#fff}
+.list li::before{content:"";position:absolute;left:4px;top:.55em;width:12px;height:12px;border-radius:50%;background:var(--red-hi);box-shadow:0 0 10px var(--red-hi)}
+.list.gold li::before{background:var(--gold);box-shadow:0 0 10px var(--gold)}
+.list.cyan li::before{background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+.list.green li::before{background:var(--green);box-shadow:0 0 10px var(--green)}
+.formula{font-family:'Playfair Display';font-style:italic;color:#fff;display:block;text-align:center;white-space:nowrap}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle}
+.frac>span{padding:0 10px;line-height:1.15}
+.frac>span+span{border-top:3px solid #fff}
+.sub{font-size:.6em;vertical-align:-.25em}
+.card-h{font-family:'Prompt';font-weight:700;font-size:30px;color:#fff}
+.tag{font-family:'Prompt';font-size:20px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase}
+/* fragments */
+.frag{opacity:0;transform:translateY(16px);transition:opacity .45s, transform .45s}
+.frag.on{opacity:1;transform:none}
+/* part divider */
+.part .bignum{position:absolute;left:110px;top:150px;font-family:'Playfair Display';font-weight:800;font-size:330px;line-height:1;color:transparent;-webkit-text-stroke:3px rgba(231,189,106,.75)}
+.part .ptitle{position:absolute;left:120px;top:540px;width:1050px}
+.part .ptitle .kicker{color:var(--red-hi)}
+.part .ptitle h2{font-family:'Prompt';font-weight:700;font-size:84px;line-height:1.15;color:#fff;margin-top:18px;text-shadow:0 6px 30px rgba(0,0,0,.6)}
+.part .ptitle h2 .serif{color:var(--gold-hi)}
+.part .ptitle p{font-size:30px;color:var(--ice-dim);margin-top:26px}
+.ecg path{fill:none;stroke:var(--red-hi);stroke-width:3;filter:drop-shadow(0 0 8px var(--red-hi))}
+/* UI */
+#bar{position:fixed;left:0;bottom:0;height:4px;background:linear-gradient(90deg,var(--red),var(--gold));transition:width .4s;z-index:5}
+#ctr{position:fixed;right:14px;bottom:10px;font:13px 'Prompt',sans-serif;color:rgba(255,255,255,.35);z-index:5}
+#hint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);font:15px 'Prompt',sans-serif;color:#fff;background:rgba(0,0,0,.6);padding:10px 22px;border-radius:999px;z-index:6;transition:opacity 1s}
+#grid{position:fixed;inset:0;background:rgba(3,11,26,.96);z-index:10;display:none;overflow:auto;padding:30px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+#grid.show{display:grid}
+#grid button{all:unset;cursor:pointer;color:#fff;font:15px 'Prompt';padding:14px 16px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12)}
+#grid button:hover,#grid button.cur{border-color:var(--gold);background:rgba(231,189,106,.12)}
+@media print{
+  @page{size:1920px 1080px;margin:0}
+  html,body{overflow:visible;height:auto}
+  #deck{position:static}
+  .s{position:relative;left:auto;top:auto;transform:none!important;opacity:1;page-break-after:always;break-after:page}
+  .frag{opacity:1;transform:none}
+  #bar,#ctr,#hint,#grid{display:none!important}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <radialGradient id="rbcG" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#ff6b6b"/><stop offset=".55" stop-color="#c3111f"/><stop offset="1" stop-color="#5a0510"/></radialGradient>
+    <radialGradient id="rbcIn" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#7a0612"/><stop offset="1" stop-color="#b30f1d" stop-opacity="0"/></radialGradient>
+    <linearGradient id="dropG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff5468"/><stop offset=".6" stop-color="#c40d22"/><stop offset="1" stop-color="#6d0410"/></linearGradient>
+    <linearGradient id="goldG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe2a3"/><stop offset="1" stop-color="#c8913a"/></linearGradient>
+    <linearGradient id="prcG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3132a"/><stop offset="1" stop-color="#4d0410"/></linearGradient>
+    <linearGradient id="ffpG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd36a"/><stop offset="1" stop-color="#d98a12"/></linearGradient>
+    <linearGradient id="pltG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset="1" stop-color="#e5bf3c"/></linearGradient>
+    <linearGradient id="cryoG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff8e6"/><stop offset="1" stop-color="#f0c98a"/></linearGradient>
+    <symbol id="rbc" viewBox="0 0 100 100">
+      <ellipse cx="50" cy="50" rx="48" ry="44" fill="url(#rbcG)"/><ellipse cx="52" cy="53" rx="26" ry="22" fill="url(#rbcIn)"/>
+      <ellipse cx="38" cy="30" rx="16" ry="6" fill="#fff" opacity=".25" transform="rotate(-20 38 30)"/>
+    </symbol>
+    <symbol id="drop" viewBox="0 0 100 130">
+      <path d="M50 4 C50 4 8 62 8 86 a42 42 0 0 0 84 0 C92 62 50 4 50 4Z" fill="url(#dropG)"/>
+      <path d="M30 78 a22 22 0 0 0 10 30" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" opacity=".5"/>
+    </symbol>
+    <symbol id="bag" viewBox="0 0 80 120">
+      <path d="M34 2h12v14H34z" fill="#cfd8e6"/><path d="M40 0v-0" />
+      <rect x="6" y="14" width="68" height="96" rx="16" fill="rgba(255,255,255,.18)" stroke="rgba(255,255,255,.6)" stroke-width="3"/>
+      <rect x="12" y="34" width="56" height="70" rx="12" fill="currentColor"/>
+      <rect x="20" y="44" width="30" height="16" rx="3" fill="#fff" opacity=".85"/>
+      <path d="M40 110v10" stroke="#cfd8e6" stroke-width="4"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div id="deck">
+
+<!-- 1 COVER -->
+<section class="s cover nofoot"><img src="assets/cover_ai_4k.jpg" style="width:100%;height:100%;object-fit:cover"></section>
+
+<!-- 2 OBJECTIVES -->
+<section class="s">
+  <div class="head"><div class="kicker">Learning Objectives</div><div class="h1">เมื่อจบการนำเสนอ <em>ผู้ฟังควรสามารถ</em></div><div class="rule"></div></div>
+  <div class="photo" style="left:80px;top:320px;width:700px;height:620px">
+    <img src="assets/hd/transfusion_illus.jpg" style="object-position:30% 50%">
+    <div class="abs" style="inset:auto 0 0 0;height:55%;background:linear-gradient(transparent,rgba(3,11,26,.92))"></div>
+    <div class="abs serif" style="left:36px;bottom:34px;font-weight:700;font-size:46px;color:#fff;line-height:1.1">Every <span class="hr">mL</span><br>counts in children.</div>
+  </div>
+  <div class="abs" style="left:850px;top:320px;right:80px;display:flex;flex-direction:column;gap:16px">
+    <div class="glass" style="display:flex;align-items:center;gap:26px;padding:22px 30px"><div class="num" style="font-size:52px;width:50px">1</div><svg width="56" height="64" viewBox="0 0 100 130"><use href="#drop"/></svg><div style="font-size:29px;line-height:1.35;color:#fff">อธิบายพยาธิสรีรวิทยาของ <b class="hl">Pediatric Hemorrhagic Shock</b></div></div>
+    <div class="glass" style="display:flex;align-items:center;gap:26px;padding:22px 30px"><div class="num" style="font-size:52px;width:50px">2</div><svg width="56" height="64" viewBox="0 0 64 64" fill="none" stroke="#ffe2a3" stroke-width="3"><rect x="14" y="6" width="36" height="52" rx="6"/><rect x="20" y="12" width="24" height="12" rx="2"/><circle cx="24" cy="33" r="2.5" fill="#ffe2a3"/><circle cx="32" cy="33" r="2.5" fill="#ffe2a3"/><circle cx="40" cy="33" r="2.5" fill="#ffe2a3"/><circle cx="24" cy="42" r="2.5" fill="#ffe2a3"/><circle cx="32" cy="42" r="2.5" fill="#ffe2a3"/><circle cx="40" cy="42" r="2.5" fill="#ffe2a3"/><circle cx="24" cy="51" r="2.5" fill="#ffe2a3"/><rect x="29" y="48.5" width="13" height="5" rx="2.5" fill="#ff3d55" stroke="none"/></svg><div style="font-size:29px;line-height:1.35;color:#fff">คำนวณ <b class="hl">EBV, MABL</b> และ Blood component ได้</div></div>
+    <div class="glass" style="display:flex;align-items:center;gap:26px;padding:22px 30px"><div class="num" style="font-size:52px;width:50px">3</div><svg width="56" height="64" viewBox="0 0 64 64"><rect x="8" y="14" width="20" height="34" rx="6" fill="#c40d22"/><rect x="36" y="14" width="20" height="34" rx="6" fill="#e9b33a"/><path d="M18 14V6M46 14V6M18 48v10M46 48v10" stroke="#ffe2a3" stroke-width="3"/><path d="M46 25v12M40 31h12" stroke="#fff" stroke-width="3"/></svg><div style="font-size:29px;line-height:1.35;color:#fff">อธิบายหลักการ <b class="hl">Pediatric Massive Transfusion Protocol</b></div></div>
+    <div class="glass" style="display:flex;align-items:center;gap:26px;padding:22px 30px"><div class="num" style="font-size:52px;width:50px">4</div><svg width="56" height="64" viewBox="0 0 64 64" fill="none"><path d="M32 6 L60 56 H4Z" stroke="#ff3d55" stroke-width="3.5" stroke-linejoin="round"/><path d="M32 24v16" stroke="#fff" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="48" r="2.8" fill="#fff"/></svg><div style="font-size:29px;line-height:1.35;color:#fff">วิเคราะห์ภาวะแทรกซ้อนจาก <b class="hl">Massive Transfusion</b></div></div>
+    <div class="glass" style="display:flex;align-items:center;gap:26px;padding:22px 30px"><div class="num" style="font-size:52px;width:50px">5</div><svg width="56" height="64" viewBox="0 0 64 64" fill="none" stroke="#ffe2a3" stroke-width="3"><rect x="34" y="8" width="24" height="18" rx="3"/><path d="M38 20l4-5 4 4 4-7 4 5" stroke="#39e58c"/><path d="M6 44h40a8 8 0 0 1 8 8v2H6z"/><circle cx="16" cy="38" r="5"/><path d="M10 54v6M50 54v6"/></svg><div style="font-size:29px;line-height:1.35;color:#fff">วางแผน <b class="hl">Anesthetic Management</b> ในเด็กที่มี Massive Blood Loss</div></div>
+  </div>
+</section>
+
+<!-- 3 PART 1 -->
+<section class="s part nofoot" data-n="01">
+  <div class="ptitle"><div class="kicker">Part 1</div><h2>ทำไม <span class="serif">Massive Blood Loss</span><br>ในเด็กจึงอันตราย?</h2><p>Pediatric physiology · Estimated Blood Volume</p></div>
+</section>
+
+<!-- 4 PHYSIOLOGY -->
+<section class="s">
+  <div class="head"><div class="kicker">01 · Pediatric Physiology</div><div class="h1">จุดอ่อนของเด็ก <em>เมื่อเสียเลือด</em></div><div class="rule"></div></div>
+  <div class="photo" style="left:80px;top:290px;width:820px;height:456px;background:#fff"><img src="assets/hd/cardio_kid.jpg"></div>
+  <div class="glass abs" style="left:80px;top:780px;width:820px;padding:24px 32px;font-size:28px;line-height:1.45;color:#fff">เด็กมี <b class="hl">blood volume น้อย</b> แต่มี <b class="hr">metabolic demand และ O₂ consumption ต่อ kg สูง</b></div>
+  <div class="abs" style="left:960px;top:290px;right:80px">
+    <div style="display:grid;grid-template-columns:1.15fr 1fr 1fr;font-family:'Prompt'">
+      <div></div>
+      <div style="text-align:center;padding:14px;font-weight:600;font-size:28px;color:#fff;background:linear-gradient(180deg,rgba(211,20,47,.55),rgba(211,20,47,.2));border-radius:18px 0 0 0">เด็ก</div>
+      <div style="text-align:center;padding:14px;font-weight:600;font-size:28px;color:var(--ice);background:rgba(255,255,255,.06);border-radius:0 18px 0 0">ผู้ใหญ่</div>
+    </div>
+    <div class="glass" style="border-radius:0 0 22px 22px;overflow:hidden">
+      <table style="width:100%;border-collapse:collapse;font-size:27px">
+        <colgroup><col style="width:37%"><col style="width:31.5%"><col></colgroup>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.1)"><td style="padding:19px 24px;color:var(--ice-dim)">Blood volume</td><td style="text-align:center;color:#fff;font-weight:600;background:rgba(211,20,47,.12)">70–90 mL/kg</td><td style="text-align:center">65–70 mL/kg</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.1)"><td style="padding:19px 24px;color:var(--ice-dim)">Heart rate</td><td style="text-align:center;color:#fff;font-weight:600;background:rgba(211,20,47,.12)">สูงกว่า ▲</td><td style="text-align:center">ต่ำกว่า</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.1)"><td style="padding:19px 24px;color:var(--ice-dim)">O₂ consumption</td><td style="text-align:center;color:#fff;font-weight:600;background:rgba(211,20,47,.12)">สูงกว่า ▲</td><td style="text-align:center">ต่ำกว่า</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.1)"><td style="padding:19px 24px;color:var(--ice-dim)">Myocardial reserve</td><td style="text-align:center;color:#fff;font-weight:600;background:rgba(211,20,47,.12)">จำกัดในเด็กเล็ก ▼</td><td style="text-align:center">มากกว่า</td></tr>
+        <tr><td style="padding:19px 24px;color:var(--ice-dim)">Compensation</td><td style="text-align:center;color:#fff;font-weight:600;background:rgba(211,20,47,.12)">↑ HR + ↑ SVR</td><td style="text-align:center">↑ HR + ↑ SV</td></tr>
+      </table>
+    </div>
+    <div class="pearl" style="margin-top:28px"><span class="pill red">EXAM PEARL</span><span>Hypotension = <span class="hl">LATE sign</span> ของ pediatric hemorrhagic shock</span></div>
+  </div>
+</section>
+
+<!-- 5 COMPENSATION CURVE -->
+<section class="s">
+  <div class="head"><div class="kicker">01 · Highlight ที่ควรพูด</div><div class="h1">BP ปกติ <em>≠ Tissue perfusion ปกติ</em></div><div class="rule"></div></div>
+  <div class="glass abs" style="left:80px;top:290px;width:1060px;height:700px;padding:30px 34px">
+    <div style="display:flex;justify-content:space-between;align-items:center;font-family:'Prompt'">
+      <div style="font-size:24px;color:#fff;font-weight:600">แนวโน้ม HR และ BP เมื่อเสียเลือดมากขึ้น</div>
+      <div style="display:flex;gap:26px;font-size:20px"><span style="color:#ffd23f">━ HR</span><span style="color:#ff3d55">━ Systolic BP</span></div>
+    </div>
+    <svg width="990" height="590" viewBox="0 0 990 590" style="margin-top:6px">
+      <rect x="70" y="20" width="430" height="490" fill="rgba(57,229,140,.07)"/>
+      <rect x="500" y="20" width="215" height="490" fill="rgba(255,210,63,.08)"/>
+      <rect x="715" y="20" width="255" height="490" fill="rgba(211,20,47,.14)"/>
+      <g font-family="Prompt" font-size="20" font-weight="600">
+        <text x="285" y="52" text-anchor="middle" fill="#8ff5c0">COMPENSATED</text>
+        <text x="607" y="52" text-anchor="middle" fill="#ffd23f">HYPOTENSIVE</text>
+        <text x="842" y="52" text-anchor="middle" fill="#ff6b7d">CARDIAC ARREST RISK</text>
+      </g>
+      <path d="M70 510 H970 M70 20 V510" stroke="rgba(255,255,255,.35)" stroke-width="2"/>
+      <g font-family="Prompt" font-size="19" fill="#8fa8cf" text-anchor="middle">
+        <text x="70" y="540">0%</text><text x="285" y="540">15%</text><text x="500" y="540">30%</text><text x="715" y="540">45%</text><text x="930" y="540">60%</text>
+        <text x="520" y="578" font-size="20" fill="#d6e6ff">% Blood loss (ของ EBV)</text>
+      </g>
+      <path d="M70 360 C250 320, 420 200, 600 130 S760 90, 800 120 S900 330, 960 470" fill="none" stroke="#ffd23f" stroke-width="6" stroke-linecap="round" style="filter:drop-shadow(0 0 8px #ffd23f)"/>
+      <path d="M70 230 C250 228, 420 232, 520 250 S660 340, 740 420 S900 490, 960 500" fill="none" stroke="#ff3d55" stroke-width="6" stroke-linecap="round" style="filter:drop-shadow(0 0 8px #ff3d55)"/>
+      <circle cx="520" cy="250" r="12" fill="#ff3d55"/><text x="540" y="282" font-family="Prompt" font-size="22" fill="#fff" font-weight="600">BP เริ่มตก = เสียเลือดไปมากแล้ว</text>
+      <text x="110" y="410" font-family="Prompt" font-size="20" fill="#ffd23f">HR ↑ ตั้งแต่ระยะแรก</text>
+      <text x="90" y="215" font-family="Prompt" font-size="20" fill="#ff8a98">BP ยังดูปกติ</text>
+    </svg>
+    <div style="position:absolute;right:30px;bottom:14px;font-size:17px;color:var(--ice-dim)">* แผนภาพแนวคิด (conceptual) — ไม่ใช่ค่าตัวเลขจริง</div>
+  </div>
+  <div class="abs" style="left:1190px;top:300px;right:80px">
+    <ul class="list gold" style="gap:22px">
+      <li>เด็กชดเชยการเสียเลือดด้วย <b class="hl">tachycardia</b> และ <b class="hl">vasoconstriction</b></li>
+      <li>BP อาจยัง <b>ปกติในระยะแรก</b></li>
+      <li>เมื่อ compensatory mechanism ล้มเหลว จะเกิด <b class="hr">hypotension อย่างรวดเร็ว</b></li>
+      <li>การมี BP ปกติ <b class="hr">ไม่ได้แปลว่า</b> tissue perfusion ปกติ</li>
+    </ul>
+    <div class="pearl" style="margin-top:36px;font-size:26px"><span>👀 เฝ้าดู <b class="hl">HR, CRT, ปลายมือเท้า, urine output, lactate</b> — อย่ารอ BP ตก</span></div>
+  </div>
+</section>
+
+<!-- 6 EBV -->
+<section class="s">
+  <div class="head"><div class="kicker">02 · Estimated Blood Volume (EBV)</div><div class="h1">เด็ก 10 kg มีเลือด <em>เพียง 700 mL</em></div><div class="rule"></div></div>
+  <div class="photo" style="left:80px;top:290px;width:1000px;height:517px"><img src="assets/hd/blood_volume.jpg"></div>
+  <div class="abs" style="left:80px;top:840px;width:1000px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;font-family:'Prompt'">
+    <div class="glass" style="padding:14px;text-align:center;border-radius:18px"><div style="font-size:22px;color:var(--ice-dim)">Preterm</div><div style="font-size:32px;font-weight:700;color:#fff">90–100</div><div style="font-size:17px;color:var(--ice-dim)">mL/kg</div></div>
+    <div class="glass" style="padding:14px;text-align:center;border-radius:18px"><div style="font-size:22px;color:var(--ice-dim)">Term neonate</div><div style="font-size:32px;font-weight:700;color:#fff">80–90</div><div style="font-size:17px;color:var(--ice-dim)">mL/kg</div></div>
+    <div class="glass" style="padding:14px;text-align:center;border-radius:18px"><div style="font-size:22px;color:var(--ice-dim)">Infant</div><div style="font-size:32px;font-weight:700;color:#fff">75–80</div><div style="font-size:17px;color:var(--ice-dim)">mL/kg</div></div>
+    <div class="glass" style="padding:14px;text-align:center;border-radius:18px;border-color:rgba(231,189,106,.7)"><div style="font-size:22px;color:var(--gold)">Child</div><div style="font-size:32px;font-weight:700;color:var(--gold-hi)">70–75</div><div style="font-size:17px;color:var(--gold)">mL/kg</div></div>
+  </div>
+  <div class="glass abs" style="left:1130px;top:290px;right:80px;height:705px;padding:40px;text-align:center">
+    <span class="pill gold">ตัวอย่าง · เด็ก 3 ปี 10 kg</span>
+    <div class="serif" style="font-size:46px;color:#fff;margin-top:28px">EBV = 10 × 70</div>
+    <div style="font-family:'Prompt';font-weight:800;font-size:96px;color:var(--gold-hi);line-height:1.1">700 <span style="font-size:48px">mL</span></div>
+    <div class="frag">
+      <svg width="380" height="230" viewBox="0 0 380 230" style="margin-top:14px">
+        <path d="M30 200 A160 160 0 0 1 350 200" stroke="rgba(255,255,255,.12)" stroke-width="34" fill="none" stroke-linecap="round"/>
+        <path d="M30 200 A160 160 0 0 1 190 40" stroke="url(#dropG)" stroke-width="34" fill="none" stroke-linecap="round" style="filter:drop-shadow(0 0 12px #ff3d55)"/>
+        <text x="190" y="170" text-anchor="middle" font-family="Prompt" font-weight="800" font-size="78" fill="#ff3d55">50%</text>
+        <text x="190" y="215" text-anchor="middle" font-family="Prompt" font-size="24" fill="#d6e6ff">ของ EBV</text>
+      </svg>
+      <div style="font-size:32px;color:#fff;line-height:1.4;margin-top:4px">ถ้าเสียเลือด <b class="hr">350 mL</b><br>= เสียเลือดไปครึ่งหนึ่งของทั้งตัว!</div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 PART 2 -->
+<section class="s part nofoot" data-n="02">
+  <div class="ptitle"><div class="kicker">Part 2</div><h2><span class="serif">Hemorrhagic Shock</span><br>เสียเลือดแล้วเกิดอะไรขึ้น?</h2><p>Pathophysiology · Clinical signs</p></div>
+</section>
+
+<!-- 8 SHOCK CYCLE -->
+<section class="s">
+  <div class="head"><div class="kicker">03 · Pathophysiology</div><div class="h1">วงจรของ <em>Hemorrhagic Shock</em></div><div class="rule"></div></div>
+  <div class="photo" style="left:80px;top:290px;width:1100px;height:615px;background:#fff"><img src="assets/shock_cycle.jpg" style="object-fit:contain"></div>
+  <div class="abs" style="left:1230px;top:290px;right:80px;display:flex;flex-direction:column;gap:20px">
+    <div class="glass" style="padding:24px 28px;border-left:6px solid var(--green)"><div class="tag" style="color:#8ff5c0">Stage 1</div><div class="card-h">Compensation</div><div style="font-size:24px;color:var(--ice);margin-top:6px;line-height:1.4">Baroreceptor → sympathetic ↑<br>HR ↑ · vasoconstriction · urine ↓</div></div>
+    <div class="glass" style="padding:24px 28px;border-left:6px solid var(--yellow)"><div class="tag" style="color:#ffd23f">Stage 2</div><div class="card-h">Decompensation</div><div style="font-size:24px;color:var(--ice);margin-top:6px;line-height:1.4">เสียเลือดต่อเนื่องเกินกลไกชดเชย<br>BP ↓ · perfusion ↓</div></div>
+    <div class="glass" style="padding:24px 28px;border-left:6px solid var(--red-hi)"><div class="tag" style="color:#ff8a98">Stage 3</div><div class="card-h">Irreversible</div><div style="font-size:24px;color:var(--ice);margin-top:6px;line-height:1.4">Brain ischemia · multi-organ failure<br>→ cardiac arrest</div></div>
+  </div>
+</section>
+
+<!-- 9 CASCADE -->
+<section class="s">
+  <div class="head"><div class="kicker">03 · Pathophysiology</div><div class="h1">ลำดับกลไก <em>ที่ต้องอธิบายได้</em></div><div class="rule"></div></div>
+  <div class="abs" style="left:80px;right:80px;top:300px;font-family:'Prompt'">
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:44px">
+      <div class="glass" style="padding:26px 18px;text-align:center;border-radius:22px"><div style="font-size:24px;color:var(--gold)">1</div><div style="font-size:30px;font-weight:600;color:#fff;line-height:1.25">Blood loss</div><div style="font-size:22px;color:var(--ice-dim)">circulating volume ▼</div></div>
+      <div class="glass" style="padding:26px 18px;text-align:center;border-radius:22px"><div style="font-size:24px;color:var(--gold)">2</div><div style="font-size:30px;font-weight:600;color:#fff;line-height:1.25">Venous return</div><div style="font-size:22px;color:var(--ice-dim)">▼</div></div>
+      <div class="glass" style="padding:26px 18px;text-align:center;border-radius:22px"><div style="font-size:24px;color:var(--gold)">3</div><div style="font-size:30px;font-weight:600;color:#fff;line-height:1.25">Preload</div><div style="font-size:22px;color:var(--ice-dim)">▼</div></div>
+      <div class="glass" style="padding:26px 18px;text-align:center;border-radius:22px"><div style="font-size:24px;color:var(--gold)">4</div><div style="font-size:30px;font-weight:600;color:#fff;line-height:1.25">Stroke volume</div><div style="font-size:22px;color:var(--ice-dim)">▼</div></div>
+      <div class="glass" style="padding:26px 18px;text-align:center;border-radius:22px"><div style="font-size:24px;color:var(--gold)">5</div><div style="font-size:30px;font-weight:600;color:#fff;line-height:1.25">Cardiac output</div><div style="font-size:22px;color:var(--ice-dim)">▼</div></div>
+    </div>
+    <svg width="1760" height="110" viewBox="0 0 1760 110" style="display:block">
+      <defs><marker id="ah" markerWidth="10" markerHeight="10" refX="6" refY="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#ff3d55"/></marker></defs>
+      <path d="M1592 6 V55 H168 V100" stroke="#ff3d55" stroke-width="4" fill="none" stroke-dasharray="2 10" stroke-linecap="round" marker-end="url(#ah)"/>
+    </svg>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:44px">
+      <div style="padding:26px 18px;text-align:center;border-radius:22px;background:rgba(211,20,47,.18);border:1px solid rgba(255,61,85,.35)"><div style="font-size:24px;color:var(--gold)">6</div><div style="font-size:30px;font-weight:600;color:#fff;line-height:1.25">O₂ delivery (DO₂)</div><div style="font-size:22px;color:#ffb3bd">▼</div></div>
+      <div style="padding:26px 18px;text-align:center;border-radius:22px;background:rgba(211,20,47,.28);border:1px solid rgba(255,61,85,.45)"><div style="font-size:24px;color:var(--gold)">7</div><div style="font-size:30px;font-weight:600;color:#fff;line-height:1.25">Tissue hypoxia</div></div>
+      <div style="padding:26px 18px;text-align:center;border-radius:22px;background:rgba(211,20,47,.40);border:1px solid rgba(255,61,85,.55)"><div style="font-size:24px;color:var(--gold)">8</div><div style="font-size:30px;font-weight:600;color:#fff;line-height:1.25">Anaerobic metabolism</div></div>
+      <div style="padding:26px 18px;text-align:center;border-radius:22px;background:rgba(211,20,47,.55);border:1px solid rgba(255,61,85,.7)"><div style="font-size:24px;color:var(--gold)">9</div><div style="font-size:30px;font-weight:600;color:#fff;line-height:1.25">Lactate</div><div style="font-size:22px;color:#fff">▲</div></div>
+      <div style="padding:26px 18px;text-align:center;border-radius:22px;background:linear-gradient(160deg,#e01a37,#7a0816);box-shadow:0 0 40px rgba(255,61,85,.55)"><div style="font-size:24px;color:var(--gold-hi)">10</div><div style="font-size:30px;font-weight:700;color:#fff;line-height:1.25">Metabolic acidosis<br>&amp; Organ dysfunction</div></div>
+    </div>
+  </div>
+  <div class="abs" style="left:80px;right:80px;top:800px;display:flex;gap:22px;align-items:stretch">
+    <div class="glass formula" style="padding:18px 30px;font-size:36px;display:flex;align-items:center">CO = HR × SV</div>
+    <div class="glass formula" style="padding:18px 30px;font-size:36px;display:flex;align-items:center"><span>DO<span class="sub">2</span> = CO × CaO<span class="sub">2</span> × 10</span></div>
+    <div class="glass formula" style="padding:18px 30px;font-size:32px;flex:1;display:flex;align-items:center;justify-content:center"><span>CaO<span class="sub">2</span> = (1.34 × Hb × SaO<span class="sub">2</span>) + (0.003 × PaO<span class="sub">2</span>)</span></div>
+  </div>
+  <div class="pearl green abs" style="left:80px;right:80px;top:920px;padding:14px 26px;font-size:25px"><span><b class="hg">Clinical pearl:</b> เด็กอาจมี SpO₂ 99% แต่ O₂ delivery ไม่พอ — ปัญหาอยู่ที่ <b>Hb</b> และ <b>Cardiac output</b> ไม่ใช่ saturation อย่างเดียว</span></div>
+</section>
+
+<!-- 10 CLINICAL SIGNS -->
+<section class="s">
+  <div class="head"><div class="kicker">04 · Clinical signs</div><div class="h1">อาการแสดง <em>Early vs Late</em></div><div class="rule"></div></div>
+  <svg class="abs" style="left:80px;top:262px" width="1760" height="50" viewBox="0 0 1760 50">
+    <defs><linearGradient id="sev" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1730" y2="0"><stop offset="0" stop-color="#ffd23f"/><stop offset="1" stop-color="#ff3d55"/></linearGradient></defs>
+    <path d="M0 30 H1730" stroke="url(#sev)" stroke-width="6"/><path d="M1725 16 L1758 30 L1725 44Z" fill="#ff3d55"/>
+    <text x="880" y="18" text-anchor="middle" font-family="Prompt" font-size="22" fill="#d6e6ff">การเสียเลือดมากขึ้น / เวลาผ่านไป</text>
+  </svg>
+  <div class="abs" style="left:80px;top:330px;width:850px">
+    <div class="pill" style="background:rgba(255,210,63,.16);color:#ffe27a;border:1px solid rgba(255,210,63,.5);font-size:26px">⚠️ EARLY SIGNS — ต้องจับให้ได้</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px">
+      <div class="glass" style="padding:22px 24px;border-radius:18px"><div style="font-size:40px">💓</div><div class="card-h" style="font-size:27px">Tachycardia</div></div>
+      <div class="glass" style="padding:22px 24px;border-radius:18px"><div style="font-size:40px">🫳</div><div class="card-h" style="font-size:27px">Peripheral vasoconstriction</div></div>
+      <div class="glass" style="padding:22px 24px;border-radius:18px"><div style="font-size:40px">⏱️</div><div class="card-h" style="font-size:27px">Capillary refill prolonged</div></div>
+      <div class="glass" style="padding:22px 24px;border-radius:18px"><div style="font-size:40px">🧊</div><div class="card-h" style="font-size:27px">Cool extremities</div></div>
+      <div class="glass" style="padding:22px 24px;border-radius:18px"><div style="font-size:40px">📉</div><div class="card-h" style="font-size:27px">Narrow pulse pressure</div></div>
+      <div class="glass" style="padding:22px 24px;border-radius:18px"><div style="font-size:40px">💧</div><div class="card-h" style="font-size:27px">Urine output ลดลง</div></div>
+    </div>
+  </div>
+  <div class="abs" style="left:990px;top:330px;right:80px">
+    <div class="pill red" style="font-size:26px">🚨 LATE SIGNS — อันตรายแล้ว</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px">
+      <div style="padding:22px 24px;border-radius:18px;background:rgba(211,20,47,.22);border:1px solid rgba(255,61,85,.45)"><div style="font-size:40px">🩸</div><div class="card-h" style="font-size:27px">Hypotension</div></div>
+      <div style="padding:22px 24px;border-radius:18px;background:rgba(211,20,47,.22);border:1px solid rgba(255,61,85,.45)"><div style="font-size:40px">🥶</div><div class="card-h" style="font-size:27px">Severe peripheral hypoperfusion</div></div>
+      <div style="padding:22px 24px;border-radius:18px;background:rgba(211,20,47,.22);border:1px solid rgba(255,61,85,.45)"><div style="font-size:40px">😵</div><div class="card-h" style="font-size:27px">Altered consciousness</div></div>
+      <div style="padding:22px 24px;border-radius:18px;background:rgba(211,20,47,.22);border:1px solid rgba(255,61,85,.45)"><div style="font-size:40px">🐢</div><div class="card-h" style="font-size:27px">Bradycardia ในระยะรุนแรง</div></div>
+      <div style="padding:22px 24px;border-radius:18px;background:rgba(211,20,47,.22);border:1px solid rgba(255,61,85,.45)"><div style="font-size:40px">💔</div><div class="card-h" style="font-size:27px">Cardiovascular collapse</div></div>
+      <div style="padding:22px 24px;border-radius:18px;background:rgba(211,20,47,.22);border:1px solid rgba(255,61,85,.45)"><div style="font-size:40px">🫀</div><div class="card-h" style="font-size:27px">Organ failure</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 PART 3 -->
+<section class="s part nofoot" data-n="03">
+  <div class="ptitle"><div class="kicker">Part 3</div><h2><span class="serif">Calculation Workshop</span><br>สูตรที่วิสัญญีต้องแม่น</h2><p>EBV · MABL · PRC volume · Blood components</p></div>
+</section>
+
+<!-- 12 EBV & MABL -->
+<section class="s">
+  <div class="head"><div class="kicker">05 · Calculation Workshop <span class="pill green" style="font-size:18px;letter-spacing:0;margin-left:16px;vertical-align:middle">ให้ผู้ฟังลองคิด</span></div><div class="h1">EBV &amp; <em>MABL</em></div><div class="rule"></div></div>
+  <div class="glass abs" style="left:80px;top:300px;width:820px;height:680px;padding:40px">
+    <div class="tag">5.1 · Estimated Blood Volume</div>
+    <div class="formula" style="font-size:54px;margin-top:40px">EBV = Weight × EBV/kg</div>
+    <div style="height:2px;background:rgba(255,255,255,.12);margin:46px 0 34px"></div>
+    <div style="font-size:26px;color:var(--ice-dim)">โจทย์: เด็ก 10 kg อายุ 3 ปี (child ≈ 70 mL/kg)</div>
+    <div class="frag" style="margin-top:22px;font-family:'Prompt';font-size:40px;color:#fff">EBV = 10 × 70 = <b class="hl" style="font-size:64px">700 mL</b></div>
+  </div>
+  <div class="glass abs" style="left:950px;top:300px;right:80px;height:680px;padding:40px">
+    <div class="tag">5.2 · Maximal Allowable Blood Loss</div>
+    <div class="formula" style="font-size:52px;margin-top:26px">MABL = EBV × <span class="frac"><span>Hct<span class="sub">i</span> − Hct<span class="sub">f</span></span><span>Hct<span class="sub">i</span></span></span></div>
+    <div style="font-size:21px;color:var(--ice-dim);text-align:center;margin-top:12px">Hct<sub>i</sub> = Hct เริ่มต้น · Hct<sub>f</sub> = Hct ต่ำสุดที่ยอมรับได้</div>
+    <div style="height:2px;background:rgba(255,255,255,.12);margin:30px 0 26px"></div>
+    <div style="font-size:26px;color:var(--ice-dim)">โจทย์ (ตัวอย่าง): EBV 700 mL · Hct<sub>i</sub> 36% · Hct<sub>f</sub> 25%</div>
+    <div class="frag" style="margin-top:20px;font-family:'Prompt';font-size:36px;color:#fff">MABL = 700 × (36−25)/36 ≈ <b class="hl" style="font-size:58px">214 mL</b></div>
+    <div class="frag" style="margin-top:16px;font-size:24px;color:#ffb3bd">→ เสียเลือดเกินนี้ ควรพิจารณาให้ PRC</div>
+  </div>
+</section>
+
+<!-- 13 PRC -->
+<section class="s">
+  <div class="head"><div class="kicker">05 · Calculation Workshop</div><div class="h1">คำนวณปริมาณ <em>PRC</em> ที่ต้องให้</div><div class="rule"></div></div>
+  <div class="glass abs" style="left:80px;top:290px;width:860px;height:560px;padding:36px">
+    <div class="tag">5.3 · สูตรหาร 70 (จาก Hct)</div>
+    <div class="formula" style="font-size:42px;margin-top:30px">PRC = <span class="frac"><span>Wt × EBV/kg × (Hct<span class="sub">t</span> − Hct<span class="sub">i</span>)</span><span>70</span></span></div>
+    <div style="font-size:24px;color:var(--ice-dim);margin-top:30px">โจทย์: 10 kg · EBV 70 mL/kg · Hct 21% → เป้าหมาย 30%</div>
+    <div class="frag" style="margin-top:18px;font-family:'Prompt';font-size:34px;color:#fff">= 10 × 70 × (30−21) / 70 = <b class="hl" style="font-size:56px">90 mL</b></div>
+  </div>
+  <div class="glass abs" style="left:980px;top:290px;right:80px;height:560px;padding:36px">
+    <div class="tag">5.4 · สูตรจาก Hb</div>
+    <div class="formula" style="font-size:50px;margin-top:40px">PRC (mL) = Wt × ΔHb × 3</div>
+    <div style="font-size:24px;color:var(--ice-dim);margin-top:42px">โจทย์: 10 kg · Hb 7 → เป้าหมาย 10 g/dL</div>
+    <div class="frag" style="margin-top:18px;font-family:'Prompt';font-size:34px;color:#fff">= 10 × 3 × 3 = <b class="hl" style="font-size:56px">90 mL</b></div>
+  </div>
+  <div class="abs" style="left:80px;right:80px;top:880px;display:grid;grid-template-columns:1fr 1fr;gap:40px">
+    <div class="pearl gold" style="font-size:23px;padding:16px 24px"><span>⚠️ เลข <b class="hl">70</b> ในตัวหาร = <b>Hct ของ PRC</b> ไม่ใช่ EBV ของเด็ก · ใช้หน่วย Hct (%) เดียวกันทั้งสูตร</span></div>
+    <div class="pearl gold" style="font-size:23px;padding:16px 24px"><span>⚠️ Factor <b class="hl">3</b> สมมติ PRC Hct ≈ 60% · บางแนวทางใช้ 4–5 → <b>ต้องระบุสมมติฐาน</b> ไม่ใช้สลับกันโดยไม่อธิบาย</span></div>
+  </div>
+</section>
+
+<!-- 14 BLOOD COMPONENTS -->
+<section class="s">
+  <div class="head"><div class="kicker">06 · Blood Component Therapy</div><div class="h1">เลือดแต่ละชนิด <em>ให้เพื่ออะไร?</em></div><div class="rule"></div></div>
+  <div class="photo" style="left:80px;top:290px;width:640px;height:700px"><img src="assets/hd/blood_bags_main.jpg"></div>
+  <div class="abs" style="left:770px;top:290px;right:80px;display:grid;grid-template-columns:1fr 1fr;gap:22px">
+    <div class="glass" style="padding:26px;display:flex;gap:22px;align-items:center"><svg width="80" height="120" style="color:url(#prcG);flex:none"><use href="#bag" style="color:#a3122a"/></svg><div><div class="card-h" style="color:#ff8a98">PRC</div><div style="font-family:'Prompt';font-size:34px;color:#fff;font-weight:700">10–15 <span style="font-size:22px">mL/kg</span></div><div style="font-size:24px;color:var(--ice)">เพิ่ม O₂ carrying capacity<br><b class="hl">= เพิ่ม Hb</b></div></div></div>
+    <div class="glass" style="padding:26px;display:flex;gap:22px;align-items:center"><svg width="80" height="120" style="flex:none"><use href="#bag" style="color:#f0a92a"/></svg><div><div class="card-h" style="color:#ffc96b">FFP</div><div style="font-family:'Prompt';font-size:34px;color:#fff;font-weight:700">10–15 <span style="font-size:22px">mL/kg</span></div><div style="font-size:24px;color:var(--ice)">ทดแทน coagulation factors<br><b class="hl">= เพิ่ม clotting factors</b></div></div></div>
+    <div class="glass" style="padding:26px;display:flex;gap:22px;align-items:center"><svg width="80" height="120" style="flex:none"><use href="#bag" style="color:#f3d55a"/></svg><div><div class="card-h" style="color:#ffe27a">Platelet</div><div style="font-family:'Prompt';font-size:34px;color:#fff;font-weight:700">10–15 <span style="font-size:22px">mL/kg*</span></div><div style="font-size:24px;color:var(--ice)">เพิ่มจำนวนและ<br><b class="hl">การทำงานของ platelet</b></div></div></div>
+    <div class="glass" style="padding:26px;display:flex;gap:22px;align-items:center"><svg width="80" height="120" style="flex:none"><use href="#bag" style="color:#f5dcae"/></svg><div><div class="card-h" style="color:#ffe9c4">Cryoprecipitate</div><div style="font-family:'Prompt';font-size:34px;color:#fff;font-weight:700">5–10 <span style="font-size:22px">mL/kg*</span></div><div style="font-size:24px;color:var(--ice)">ทดแทนเฉพาะจุด<br><b class="hl">= เพิ่ม fibrinogen</b></div></div></div>
+  </div>
+  <div class="pearl gold abs" style="left:770px;right:80px;top:880px;font-size:23px;padding:18px 26px"><span>* ต้องระบุชนิดผลิตภัณฑ์ เพราะ platelet และ cryoprecipitate มี <b class="hl">ความเข้มข้นต่างกันตาม blood bank</b></span></div>
+</section>
+
+<!-- 15 PART 4 -->
+<section class="s part nofoot" data-n="04">
+  <div class="ptitle"><div class="kicker">Part 4</div><h2><span class="serif">Massive Transfusion</span><br>&amp; ภาวะแทรกซ้อน</h2><p>MTP · Lethal Diamond · Lab monitoring · Anesthetic management</p></div>
+</section>
+
+<!-- 16 MTP -->
+<section class="s">
+  <div class="head"><div class="kicker">07 · Massive Transfusion Protocol (MTP)</div><div class="h1">ระบบที่ดี <em>ชนะการแก้ปัญหาเฉพาะหน้า</em></div><div class="rule"></div></div>
+  <div class="photo" style="left:80px;top:290px;width:1080px;height:601px;background:#fff"><img src="assets/hd/mtp.jpg"></div>
+  <div class="abs" style="left:1210px;top:290px;right:80px">
+    <div style="font-family:'Prompt';font-size:26px;color:var(--gold-hi);font-weight:600;margin-bottom:16px">ประเด็นสำคัญของ MTP</div>
+    <div style="display:flex;flex-direction:column;gap:11px;font-size:25px;color:#fff">
+      <div class="glass" style="padding:12px 20px;border-radius:14px"><b class="num">1</b>&nbsp; Definition &amp; criteria ในการ activate</div>
+      <div class="glass" style="padding:12px 20px;border-radius:14px"><b class="num">2</b>&nbsp; ใครเป็นผู้ activate</div>
+      <div class="glass" style="padding:12px 20px;border-radius:14px"><b class="num">3</b>&nbsp; ประสานงานกับ blood bank</div>
+      <div class="glass" style="padding:12px 20px;border-radius:14px"><b class="num">4</b>&nbsp; Emergency release blood</div>
+      <div class="glass" style="padding:12px 20px;border-radius:14px"><b class="num">5</b>&nbsp; Balanced transfusion</div>
+      <div class="glass" style="padding:12px 20px;border-radius:14px"><b class="num">6</b>&nbsp; Rapid infuser &amp; blood warmer</div>
+      <div class="glass" style="padding:12px 20px;border-radius:14px"><b class="num">7</b>&nbsp; Laboratory monitoring</div>
+      <div class="glass" style="padding:12px 20px;border-radius:14px"><b class="num">8</b>&nbsp; Criteria for deactivation</div>
+    </div>
+  </div>
+</section>
+
+<!-- 17 DEFINITION + BALANCED -->
+<section class="s">
+  <div class="head"><div class="kicker">07 · MTP</div><div class="h1">Massive Transfusion &amp; <em>Balanced Transfusion</em></div><div class="rule"></div></div>
+  <div class="abs" style="left:80px;top:290px;width:780px">
+    <div style="font-family:'Prompt';font-size:26px;color:var(--gold-hi);font-weight:600;margin-bottom:16px">นิยามที่ใช้บ่อยในเด็ก (อย่างใดอย่างหนึ่ง)</div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="glass" style="padding:22px 28px;display:flex;align-items:center;gap:26px"><div style="font-family:'Prompt';font-weight:800;font-size:54px;color:var(--red-hi);width:200px">≥ 100%</div><div style="font-size:26px;color:#fff">ของ EBV ภายใน <b class="hl">24 ชั่วโมง</b></div></div>
+      <div class="glass" style="padding:22px 28px;display:flex;align-items:center;gap:26px"><div style="font-family:'Prompt';font-weight:800;font-size:54px;color:var(--red-hi);width:200px">≥ 50%</div><div style="font-size:26px;color:#fff">ของ EBV ภายใน <b class="hl">3 ชั่วโมง</b></div></div>
+      <div class="glass" style="padding:22px 28px;display:flex;align-items:center;gap:26px"><div style="font-family:'Prompt';font-weight:800;font-size:54px;color:var(--red-hi);width:200px">&gt; 40</div><div style="font-size:26px;color:#fff">mL/kg ของ blood products<br>ภายใน <b class="hl">24 ชั่วโมง</b></div></div>
+    </div>
+    <div style="font-size:21px;color:var(--ice-dim);margin-top:16px">* criteria การ activate ให้ยึดตาม protocol ของโรงพยาบาล</div>
+  </div>
+  <div class="glass abs" style="left:920px;top:290px;right:80px;height:700px;padding:36px;text-align:center">
+    <div class="tag">Balanced transfusion</div>
+    <div style="display:flex;justify-content:center;align-items:flex-end;gap:30px;margin-top:26px">
+      <div><svg width="120" height="180" viewBox="0 0 80 120"><use href="#bag" style="color:#a3122a"/></svg><div style="font-family:'Prompt';font-size:26px;color:#ff8a98;font-weight:600">PRC</div></div>
+      <div style="font-family:'Prompt';font-size:60px;color:var(--gold);padding-bottom:60px">:</div>
+      <div><svg width="120" height="180" viewBox="0 0 80 120"><use href="#bag" style="color:#f0a92a"/></svg><div style="font-family:'Prompt';font-size:26px;color:#ffc96b;font-weight:600">FFP</div></div>
+      <div style="font-family:'Prompt';font-size:60px;color:var(--gold);padding-bottom:60px">:</div>
+      <div><svg width="120" height="180" viewBox="0 0 80 120"><use href="#bag" style="color:#f3d55a"/></svg><div style="font-family:'Prompt';font-size:26px;color:#ffe27a;font-weight:600">Platelet</div></div>
+    </div>
+    <div style="font-family:'Prompt';font-weight:800;font-size:84px;color:#fff;line-height:1.1;margin-top:10px">1 : 1 : 1</div>
+    <div style="font-size:25px;color:var(--ice);line-height:1.45;margin-top:14px">เป็นหนึ่งในแนวทางของ pediatric trauma MTP<br><b class="hr">แต่ไม่ใช่สูตรบังคับ</b>สำหรับเด็กทุกคน และไม่ใช่การให้ทุก component<br>ในปริมาณเท่ากันโดยไม่ประเมินผลิตภัณฑ์</div>
+    <div class="pearl green" style="margin-top:22px;font-size:23px;padding:16px 22px;text-align:left"><span>✅ หัวใจคือ <b class="hg">resuscitate เร็ว</b> + <b class="hg">surgical hemorrhage control</b> + ปรับ component ตามผลตรวจ</span></div>
+  </div>
+</section>
+
+<!-- 18 LETHAL TRIAD IMAGE -->
+<section class="s">
+  <div class="head"><div class="kicker">08 · The Lethal Triad</div><div class="h1">3 ภาวะที่ <em>เสริมกันเป็นวงจร</em></div><div class="rule"></div></div>
+  <div class="photo" style="left:80px;top:290px;width:1100px;height:609px;background:#fff"><img src="assets/hd/lethal_triad.jpg"></div>
+  <div class="abs" style="left:1230px;top:300px;right:80px">
+    <div style="font-size:30px;color:#fff;line-height:1.5">เสียเลือด → ได้ fluid/เลือดเย็น → <b class="hc">ตัวเย็น</b><br>Perfusion ลด → <b style="color:#ffd23f">acidosis</b><br>ทั้งสองอย่างทำให้ <b class="hr">เลือดไม่แข็งตัว</b><br>→ เลือดออกมากขึ้น → วนซ้ำ</div>
+    <div class="pearl" style="margin-top:40px;font-size:27px"><span>ใน massive transfusion เพิ่ม<br><b class="hg">Hypocalcemia</b> → กลายเป็น<br><b class="hl" style="font-size:34px">Lethal Diamond</b></span></div>
+  </div>
+</section>
+
+<!-- 19 LETHAL DIAMOND -->
+<section class="s dark-red">
+  <div class="head"><div class="kicker">08 · Lethal Triad → Lethal Diamond</div><div class="h1">วงจรมรณะ <em>ที่ต้องตัดให้ได้</em></div><div class="rule"></div></div>
+  <svg class="abs" style="left:110px;top:270px;overflow:visible" width="900" height="760" viewBox="0 0 900 760">
+    <defs><filter id="glow"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+    <polygon points="450,100 800,380 450,660 100,380" fill="rgba(211,20,47,.10)" stroke="url(#goldG)" stroke-width="5" filter="url(#glow)"/>
+    <polygon points="450,200 690,380 450,560 210,380" fill="none" stroke="rgba(255,61,85,.4)" stroke-width="2" stroke-dasharray="6 10"/>
+    <use href="#drop" x="390" y="300" width="120" height="156" style="filter:drop-shadow(0 0 30px #ff3d55)"/>
+    <g font-family="Prompt" font-weight="700">
+      <circle cx="450" cy="100" r="62" fill="#0d2a55" stroke="#3fd6ff" stroke-width="5"/><text x="450" y="118" font-size="50" text-anchor="middle">❄️</text>
+      <text x="530" y="70" font-size="32" fill="#3fd6ff">HYPOTHERMIA</text>
+      <circle cx="800" cy="380" r="62" fill="#3a0a14" stroke="#ff3d55" stroke-width="5"/><text x="800" y="398" font-size="50" text-anchor="middle">🩸</text>
+      <text x="800" y="290" font-size="32" fill="#ff6b7d" text-anchor="middle">COAGULOPATHY</text>
+      <circle cx="450" cy="660" r="62" fill="#2f2306" stroke="#ffd23f" stroke-width="5"/><text x="450" y="678" font-size="46" fill="#ffd23f" font-weight="800" text-anchor="middle">pH</text>
+      <text x="530" y="710" font-size="32" fill="#ffd23f">ACIDOSIS</text>
+      <circle cx="100" cy="380" r="62" fill="#0b2a22" stroke="#39e58c" stroke-width="5"/><text x="100" y="396" font-size="42" fill="#39e58c" font-weight="800" text-anchor="middle">Ca²⁺</text>
+      <text x="100" y="290" font-size="32" fill="#39e58c" text-anchor="middle">HYPOCALCEMIA</text>
+    </g>
+  </svg>
+  <div class="abs" style="left:1060px;top:290px;right:80px;display:flex;flex-direction:column;gap:18px;font-family:'Prompt'">
+    <div class="glass" style="padding:22px 28px;border-left:6px solid #3fd6ff;border-radius:18px"><div style="font-size:30px;font-weight:700;color:#3fd6ff">Hypothermia</div><div style="font-size:25px;color:#fff;margin-top:4px">Coagulation enzyme ทำงาน ▼ → <b class="hl">เลือดหยุดยาก</b></div></div>
+    <div class="glass" style="padding:22px 28px;border-left:6px solid #ffd23f;border-radius:18px"><div style="font-size:30px;font-weight:700;color:#ffd23f">Acidosis</div><div style="font-size:25px;color:#fff;margin-top:4px">Coagulation + myocardial function ▼ → <b class="hl">Shock รุนแรง</b></div></div>
+    <div class="glass" style="padding:22px 28px;border-left:6px solid #ff3d55;border-radius:18px"><div style="font-size:30px;font-weight:700;color:#ff6b7d">Coagulopathy</div><div style="font-size:25px;color:#fff;margin-top:4px">Clot formation ผิดปกติ → <b class="hl">Bleeding เพิ่ม</b></div></div>
+    <div class="glass" style="padding:22px 28px;border-left:6px solid #39e58c;border-radius:18px;box-shadow:0 0 0 2px rgba(57,229,140,.35),0 20px 60px rgba(0,0,0,.35)"><div style="font-size:30px;font-weight:700;color:#39e58c">Hypocalcemia <span class="pill green" style="font-size:18px;padding:4px 14px;margin-left:10px;vertical-align:middle">+ Diamond</span></div><div style="font-size:25px;color:#fff;margin-top:4px">Citrate จับ Ca²⁺ → <b class="hl">Myocardial contractility ▼</b></div></div>
+  </div>
+</section>
+
+<!-- 20 CALCIUM QUESTION -->
+<section class="s">
+  <div class="head"><div class="kicker">08 · คำถามเด็ด</div><div class="h1">ทำไม <em>Calcium</em> จึงสำคัญมากใน Massive Transfusion?</div><div class="rule"></div></div>
+  <div class="abs" style="left:80px;top:300px;width:470px;height:680px;border-radius:28px;background:radial-gradient(circle at 50% 40%,rgba(57,229,140,.25),rgba(57,229,140,.03) 70%);border:1px solid rgba(57,229,140,.35);display:flex;flex-direction:column;align-items:center;justify-content:center">
+    <div style="font-family:'Prompt';font-weight:800;font-size:170px;color:#39e58c;line-height:1;text-shadow:0 0 40px rgba(57,229,140,.6)">Ca<sup style="font-size:80px">2+</sup></div>
+    <div style="font-family:'Prompt';font-size:28px;color:#fff;margin-top:20px">เป้าหมาย iCa</div>
+    <div style="font-family:'Prompt';font-weight:700;font-size:54px;color:var(--gold-hi)">&gt; 1.1 mmol/L</div>
+  </div>
+  <div class="abs" style="left:610px;top:300px;right:80px;display:flex;flex-direction:column;gap:18px">
+    <div class="glass frag" style="padding:22px 30px;display:flex;gap:24px;align-items:center"><div style="font-size:48px">🧪</div><div style="font-size:27px;color:#fff;line-height:1.4"><b class="hl">Citrate</b> (สารกันเลือดแข็ง) ใน PRC / FFP / Platelet <b>จับ Ca²⁺ และ Mg²⁺</b><br><span style="color:var(--ice-dim)">ยิ่งให้เร็วและมาก iCa ยิ่งตก</span></div></div>
+    <div class="glass frag" style="padding:22px 30px;display:flex;gap:24px;align-items:center"><div style="font-size:48px">👶</div><div style="font-size:27px;color:#fff;line-height:1.4">ทารก/เด็กเล็ก <b class="hl">ตับ metabolize citrate ได้ช้า</b><br><span style="color:var(--ice-dim)">+ hypothermia / hypoperfusion ทำให้ citrate สะสม</span></div></div>
+    <div class="glass frag" style="padding:22px 30px;display:flex;gap:24px;align-items:center"><div style="font-size:48px">❤️</div><div style="font-size:27px;color:#fff;line-height:1.4">Ca²⁺ จำเป็นต่อ <b class="hl">myocardial contractility</b> และ vascular tone<br><span style="color:var(--ice-dim)">iCa ต่ำ → BP ต่ำ ไม่ตอบสนองต่อ volume</span></div></div>
+    <div class="glass frag" style="padding:22px 30px;display:flex;gap:24px;align-items:center"><div style="font-size:48px">🩸</div><div style="font-size:27px;color:#fff;line-height:1.4">Ca²⁺ = <b class="hl">coagulation factor IV</b><br><span style="color:var(--ice-dim)">iCa ต่ำ → coagulopathy แย่ลง</span></div></div>
+    <div class="pearl green frag" style="font-size:24px;padding:18px 26px"><span>💉 แก้ไข: <b class="hg">Calcium gluconate 10%</b> 30–60 mg/kg หรือ <b class="hg">CaCl₂ 10%</b> 10–20 mg/kg (central line) · ตรวจ iCa ซ้ำ · ตาม protocol</span></div>
+  </div>
+</section>
+
+<!-- 21 COMPLICATIONS -->
+<section class="s">
+  <div class="head"><div class="kicker">09 · Complications of Massive Transfusion</div><div class="h1">ภาวะแทรกซ้อน <em>ที่ต้องเฝ้าระวัง</em></div><div class="rule"></div></div>
+  <div class="abs" style="left:80px;right:80px;top:300px;display:grid;grid-template-columns:repeat(4,1fr);gap:22px">
+    <div class="glass" style="padding:26px;border-top:5px solid #39e58c;height:320px"><div style="font-size:48px">🦴</div><div class="card-h">Hypocalcemia</div><div style="font-size:23px;color:var(--ice);margin-top:8px;line-height:1.4">Citrate จับ Ca²⁺ → BP ↓, contractility ↓, coagulopathy</div></div>
+    <div class="glass" style="padding:26px;border-top:5px solid #ff3d55;height:320px"><div style="font-size:48px">⚡</div><div class="card-h">Hyperkalemia</div><div style="font-size:23px;color:var(--ice);margin-top:8px;line-height:1.4">K⁺ สูงในเลือดเก่า/irradiated · ให้เร็ว → arrhythmia, <b class="hr">cardiac arrest ในทารก</b></div></div>
+    <div class="glass" style="padding:26px;border-top:5px solid #3fd6ff;height:320px"><div style="font-size:48px">❄️</div><div class="card-h">Hypothermia</div><div style="font-size:23px;color:var(--ice);margin-top:8px;line-height:1.4">เลือด/สารน้ำเย็น · พื้นที่ผิวต่อน้ำหนักมาก → coagulopathy, arrhythmia</div></div>
+    <div class="glass" style="padding:26px;border-top:5px solid #ffd23f;height:320px"><div style="font-size:48px">⚗️</div><div class="card-h">Acid–base</div><div style="font-size:23px;color:var(--ice);margin-top:8px;line-height:1.4">ระยะแรก acidosis · ภายหลังอาจ metabolic alkalosis จาก citrate → bicarbonate</div></div>
+    <div class="glass" style="padding:26px;border-top:5px solid #ff8fd0;height:320px"><div style="font-size:48px">🧫</div><div class="card-h">Dilutional coagulopathy</div><div style="font-size:23px;color:var(--ice);margin-top:8px;line-height:1.4">Factor และ platelet เจือจาง โดยเฉพาะเมื่อให้ PRC/crystalloid มาก</div></div>
+    <div class="glass" style="padding:26px;border-top:5px solid #9be9ff;height:320px"><div style="font-size:48px">🫁</div><div class="card-h">TACO / TRALI</div><div style="font-size:23px;color:var(--ice);margin-top:8px;line-height:1.4">Volume overload หรือ lung injury → hypoxemia, pulmonary edema</div></div>
+    <div class="glass" style="padding:26px;border-top:5px solid #ffc96b;height:320px"><div style="font-size:48px">🧬</div><div class="card-h">Transfusion reaction</div><div style="font-size:23px;color:var(--ice);margin-top:8px;line-height:1.4">Hemolytic, febrile, allergic · ตรวจสอบหมู่เลือดทุกถุง</div></div>
+    <div class="glass" style="padding:26px;border-top:5px solid #c7a6ff;height:320px"><div style="font-size:48px">🧲</div><div class="card-h">Hypomagnesemia</div><div style="font-size:23px;color:var(--ice);margin-top:8px;line-height:1.4">Citrate จับ Mg²⁺ ด้วย → arrhythmia</div></div>
+  </div>
+</section>
+
+<!-- 22 LAB MONITORING -->
+<section class="s">
+  <div class="head"><div class="kicker">09 · Goal-directed therapy</div><div class="h1">ติดตามผลตรวจ <em>เพื่อเลือก component</em></div><div class="rule"></div></div>
+  <div class="glass abs" style="left:80px;top:290px;width:1080px;height:700px;overflow:hidden">
+    <table style="width:100%;border-collapse:collapse;font-size:26px;color:#fff">
+      <tr style="background:rgba(231,189,106,.14);font-family:'Prompt';color:var(--gold-hi)"><th style="text-align:left;padding:18px 28px">ผลตรวจ</th><th style="text-align:left;padding:18px">เป้าหมายโดยทั่วไป*</th><th style="text-align:left;padding:18px">ถ้าผิดปกติ → พิจารณา</th></tr>
+      <tr style="border-top:1px solid rgba(255,255,255,.1)"><td style="padding:16px 28px">Hb</td><td>≈ 7–9 g/dL</td><td style="color:#ff8a98">PRC</td></tr>
+      <tr style="border-top:1px solid rgba(255,255,255,.1)"><td style="padding:16px 28px">PT/INR, aPTT</td><td>INR &lt; 1.5</td><td style="color:#ffc96b">FFP</td></tr>
+      <tr style="border-top:1px solid rgba(255,255,255,.1)"><td style="padding:16px 28px">Platelet</td><td>&gt; 50,000 (&gt; 100,000 ถ้า CNS)</td><td style="color:#ffe27a">Platelet</td></tr>
+      <tr style="border-top:1px solid rgba(255,255,255,.1)"><td style="padding:16px 28px">Fibrinogen</td><td>&gt; 150–200 mg/dL</td><td style="color:#ffe9c4">Cryoprecipitate</td></tr>
+      <tr style="border-top:1px solid rgba(255,255,255,.1)"><td style="padding:16px 28px">Ionized Ca²⁺</td><td>&gt; 1.1 mmol/L</td><td style="color:#8ff5c0">Calcium</td></tr>
+      <tr style="border-top:1px solid rgba(255,255,255,.1)"><td style="padding:16px 28px">K⁺</td><td>ไม่สูง / ไม่ขึ้นเร็ว</td><td style="color:var(--ice)">แก้ hyperkalemia · เลือดสด</td></tr>
+      <tr style="border-top:1px solid rgba(255,255,255,.1)"><td style="padding:16px 28px">ABG / Lactate</td><td>pH &gt; 7.2 · lactate ลดลง</td><td style="color:var(--ice)">Resuscitation / ventilation</td></tr>
+      <tr style="border-top:1px solid rgba(255,255,255,.1)"><td style="padding:16px 28px">Temperature</td><td>&gt; 36 °C</td><td style="color:#9be9ff">Warmer ทุกช่องทาง</td></tr>
+    </table>
+  </div>
+  <div class="abs" style="left:1210px;top:290px;right:80px;display:flex;flex-direction:column;gap:20px">
+    <div class="glass" style="padding:26px"><div class="tag" style="color:#9be9ff">Viscoelastic test</div><div class="card-h" style="font-size:34px">TEG / ROTEM</div><div style="font-size:24px;color:var(--ice);margin-top:8px;line-height:1.4">ผลเร็ว ช่วยแยกว่าขาด factor, platelet, fibrinogen หรือ hyperfibrinolysis</div></div>
+    <div class="glass" style="padding:26px"><div class="tag" style="color:#ffc96b">Antifibrinolytic</div><div class="card-h" style="font-size:34px">Tranexamic acid</div><div style="font-size:24px;color:var(--ice);margin-top:8px;line-height:1.4">พิจารณาตาม clinical context และ protocol<br><span style="color:var(--ice-dim)">(เช่น 15 mg/kg แล้ว 2 mg/kg/h)</span></div></div>
+    <div style="font-size:19px;color:var(--ice-dim);line-height:1.4">* ค่าเป้าหมายเป็นแนวทางทั่วไป ให้ยึด protocol ของสถาบัน</div>
+  </div>
+</section>
+
+<!-- 23 ANESTHETIC MANAGEMENT -->
+<section class="s">
+  <div class="photo" style="left:0;top:0;width:1920px;height:330px;border-radius:0;box-shadow:none"><img src="assets/hd/or_room.jpg" style="object-position:50% 40%"><div class="abs" style="inset:0;background:linear-gradient(90deg,rgba(3,11,26,.95) 0%,rgba(3,11,26,.75) 45%,rgba(3,11,26,.35) 100%),linear-gradient(180deg,transparent 60%,#061430 100%)"></div></div>
+  <div class="head"><div class="kicker">10 · Anesthetic Management</div><div class="h1">บทบาท <em>วิสัญญีพยาบาล</em></div><div class="rule"></div></div>
+  <div class="abs" style="left:80px;right:80px;top:340px;display:grid;grid-template-columns:1fr 1.12fr 1fr;gap:26px">
+    <div class="glass" style="padding:28px 28px 20px;border-top:5px solid var(--cyan)">
+      <span class="pill cyan">① ก่อน induction</span>
+      <ul class="list cyan" style="margin-top:20px;gap:10px"><li style="font-size:24px">ประเมิน volume status และ severity of shock</li><li style="font-size:24px">เตรียมเลือดให้พร้อมก่อนเริ่มผ่าตัด</li><li style="font-size:24px">Large-bore IV หรือ IO access</li><li style="font-size:24px">Arterial line หากมีข้อบ่งชี้</li><li style="font-size:24px">Airway equipment &amp; emergency drugs</li><li style="font-size:24px">Rapid infuser &amp; warming devices</li></ul>
+    </div>
+    <div class="glass" style="padding:28px 28px 20px;border-top:5px solid var(--red-hi)">
+      <span class="pill red">② ระหว่างผ่าตัด</span>
+      <ul class="list" style="margin-top:20px;gap:10px"><li style="font-size:24px">Monitor ECG, BP, SpO₂, ETCO₂, temperature</li><li style="font-size:24px">บันทึก EBL และ fluid balance ต่อเนื่อง</li><li style="font-size:24px">ประเมิน response หลังให้เลือด</li><li style="font-size:24px">ติดตาม ABG, Hb, lactate, K⁺, iCa, coagulation</li><li style="font-size:24px">ป้องกัน hypothermia</li><li style="font-size:24px">ประสานศัลยแพทย์และ blood bank</li><li style="font-size:24px">เตรียมรับมือ cardiac arrest</li></ul>
+    </div>
+    <div class="glass" style="padding:28px 28px 20px;border-top:5px solid var(--green)">
+      <span class="pill green">③ หลังผ่าตัด</span>
+      <ul class="list green" style="margin-top:20px;gap:10px"><li style="font-size:24px">ประเมิน ongoing bleeding</li><li style="font-size:24px">ประเมิน ventilation &amp; oxygenation</li><li style="font-size:24px">ตรวจ coagulation และ electrolytes ซ้ำ</li><li style="font-size:24px">พิจารณาส่ง PICU</li><li style="font-size:24px">ส่งต่อข้อมูล: เลือดที่ได้รับ, เลือดที่เสีย, ผลตรวจล่าสุด</li></ul>
+    </div>
+  </div>
+</section>
+
+<!-- 24 PART 5 -->
+<section class="s part nofoot" data-n="05">
+  <div class="ptitle"><div class="kicker">Part 5</div><h2><span class="serif">Clinical Case</span><br>ให้ผู้ฟังร่วมคิด</h2><p>Case simulation: เด็กเสียเลือดระหว่างผ่าตัด</p></div>
+</section>
+
+<!-- 25 CASE MONITOR -->
+<section class="s" style="background:radial-gradient(ellipse 70% 70% at 30% 40%, #0f2b55 0%, #061430 60%, #02060f 100%)">
+  <div class="abs" style="left:80px;top:66px"><span class="pill red">🚨 EMERGENCY SCENARIO</span><div class="h1" style="margin-top:18px">Pediatric 10 kg · <em>Intraoperative massive hemorrhage</em></div></div>
+  <div class="abs" style="left:80px;top:290px;width:1060px;height:700px;border-radius:30px;background:#020409;border:14px solid #1d2533;box-shadow:0 40px 90px rgba(0,0,0,.7), inset 0 0 60px rgba(63,214,255,.06);padding:30px 34px;font-family:'Prompt'">
+    <div style="display:grid;grid-template-columns:1.55fr 1fr;grid-template-rows:repeat(3,1fr);gap:18px;height:100%">
+      <div style="border-bottom:1px solid #16202e"><div style="color:#39e58c;font-size:22px">ECG · II &nbsp;<span style="color:#8fa8cf">Age 3 y · 10 kg</span></div>
+        <svg width="100%" height="120" viewBox="0 0 560 120" preserveAspectRatio="none"><path d="M0 70 H40 L50 70 L58 30 L66 100 L74 10 L84 105 L92 70 H150 L160 70 L168 30 L176 100 L184 10 L194 105 L202 70 H260 L270 70 L278 30 L286 100 L294 10 L304 105 L312 70 H370 L380 70 L388 30 L396 100 L404 10 L414 105 L422 70 H480 L490 70 L498 30 L506 100 L514 10 L524 105 L532 70 H560" fill="none" stroke="#39e58c" stroke-width="3" style="filter:drop-shadow(0 0 6px #39e58c)"/></svg></div>
+      <div style="text-align:right;color:#39e58c"><div style="font-size:24px">HR <span style="opacity:.6">bpm</span></div><div style="font-size:130px;font-weight:700;line-height:1">160</div></div>
+      <div style="border-bottom:1px solid #16202e"><div style="color:#ff3d55;font-size:22px">NIBP · mmHg</div><div style="font-size:120px;font-weight:700;color:#ff3d55;line-height:1.05">70<span style="font-size:80px;opacity:.85">/40</span></div></div>
+      <div style="text-align:right;color:#3fd6ff"><div style="font-size:24px">SpO₂ <span style="opacity:.6">%</span></div><div style="font-size:120px;font-weight:700;line-height:1">96</div></div>
+      <div style="display:flex;gap:40px;align-items:flex-end">
+        <div style="color:#ffd23f"><div style="font-size:22px">TEMP °C</div><div style="font-size:84px;font-weight:700;line-height:1">35.0</div></div>
+        <div style="color:#ff8fd0"><div style="font-size:22px">Hb g/dL</div><div style="font-size:84px;font-weight:700;line-height:1">7</div></div>
+        <div style="color:#ff8fd0"><div style="font-size:22px">Hct %</div><div style="font-size:84px;font-weight:700;line-height:1">21</div></div>
+      </div>
+      <div style="text-align:right;color:#fff"><div style="font-size:22px;color:#ff6b7d">EST. BLOOD LOSS</div><div style="font-size:84px;font-weight:700;line-height:1">350<span style="font-size:36px"> mL</span></div></div>
+    </div>
+  </div>
+  <div class="abs" style="left:1190px;top:290px;right:80px">
+    <div style="font-family:'Prompt';font-weight:600;font-size:32px;color:var(--gold-hi);margin-bottom:18px">💭 ให้ผู้ฟังช่วยกันวิเคราะห์</div>
+    <div style="display:flex;flex-direction:column;gap:14px;font-size:27px;color:#fff">
+      <div class="glass" style="padding:16px 22px;border-radius:16px"><b class="num">1</b>&nbsp; EBV ของเด็กคนนี้เท่ากับเท่าไร?</div>
+      <div class="glass" style="padding:16px 22px;border-radius:16px"><b class="num">2</b>&nbsp; เสียเลือดไปกี่เปอร์เซ็นต์?</div>
+      <div class="glass" style="padding:16px 22px;border-radius:16px"><b class="num">3</b>&nbsp; ควร activate MTP หรือไม่?</div>
+      <div class="glass" style="padding:16px 22px;border-radius:16px"><b class="num">4</b>&nbsp; ต้องเตรียม blood component อะไร?</div>
+      <div class="glass" style="padding:16px 22px;border-radius:16px"><b class="num">5</b>&nbsp; ต้องติดตาม laboratory อะไร?</div>
+      <div class="glass" style="padding:16px 22px;border-radius:16px"><b class="num">6</b>&nbsp; ถ้า iCa ลดลงและ BP ต่ำ ต้องทำอย่างไร?</div>
+    </div>
+  </div>
+</section>
+
+<!-- 26 CASE ANSWERS -->
+<section class="s">
+  <div class="head"><div class="kicker">11 · เฉลย Case</div><div class="h1">เสียเลือด <em style="background:linear-gradient(90deg,#ff6b7d,#ff3d55);-webkit-background-clip:text;background-clip:text">50% of EBV</em> = ภาวะฉุกเฉิน</div><div class="rule"></div></div>
+  <div class="abs" style="left:80px;right:80px;top:290px;display:grid;grid-template-columns:repeat(3,1fr);gap:22px">
+    <div class="glass frag" style="padding:24px 28px;height:300px"><div class="tag">1 · EBV</div><div class="formula" style="text-align:left;font-size:40px;margin-top:20px">10 × 70</div><div style="font-family:'Prompt';font-weight:800;font-size:66px;color:var(--gold-hi)">700 mL</div></div>
+    <div class="glass frag" style="padding:24px 28px;height:300px"><div class="tag">2 · % Blood loss</div><div class="formula" style="text-align:left;font-size:40px;margin-top:14px"><span class="frac"><span>350</span><span>700</span></span> × 100</div><div style="font-family:'Prompt';font-weight:800;font-size:66px;color:var(--red-hi)">50%</div></div>
+    <div class="glass frag" style="padding:24px 28px;height:300px;border-color:rgba(57,229,140,.6)"><div class="tag" style="color:#8ff5c0">3 · Activate MTP?</div><div style="font-family:'Prompt';font-weight:800;font-size:66px;color:#39e58c;margin-top:10px">✅ YES</div><div style="font-size:23px;color:var(--ice);line-height:1.4">เสีย 50% EBV + HR 160 + BP 70/40 = decompensated shock</div></div>
+    <div class="glass frag" style="padding:24px 28px;height:300px"><div class="tag">4 · Blood components</div><div style="font-size:24px;color:#fff;line-height:1.45;margin-top:14px"><b class="hr">PRC</b> + <b style="color:#ffc96b">FFP</b> + <b style="color:#ffe27a">Platelet</b> (balanced)<br>± <b style="color:#ffe9c4">Cryo</b> ตาม fibrinogen<br>ผ่าน <b class="hc">blood warmer</b></div></div>
+    <div class="glass frag" style="padding:24px 28px;height:300px"><div class="tag">5 · Laboratory</div><div style="font-size:24px;color:#fff;line-height:1.45;margin-top:14px">ABG, lactate, Hb/Hct, K⁺, <b class="hg">iCa</b>, glucose<br>PT/INR, aPTT, fibrinogen, platelet<br>± TEG/ROTEM · ตรวจซ้ำเป็นระยะ</div></div>
+    <div class="glass frag" style="padding:24px 28px;height:300px"><div class="tag">6 · iCa ↓ + BP ต่ำ</div><div style="font-size:24px;color:#fff;line-height:1.45;margin-top:14px">ให้ <b class="hg">Calcium</b> (gluconate / CaCl₂)<br>ทดแทน volume ด้วยเลือดต่อเนื่อง<br>แก้ <b class="hc">hypothermia 35 °C</b> · เช็ค K⁺</div></div>
+  </div>
+  <div class="pearl frag abs" style="left:80px;right:80px;top:930px;font-size:25px;padding:16px 26px"><span>⏱️ ต้อง <b class="hl">resuscitate ทันที</b> พร้อม <b class="hl">ควบคุมแหล่งเลือดออก</b> — ไม่รอให้ Hb ลดลงก่อน</span></div>
+</section>
+
+<!-- 27 TAKE HOME -->
+<section class="s dark-red">
+  <div class="head"><div class="kicker">Take-home messages</div><div class="h1">5 ข้อที่ <em>ต้องจำ</em></div><div class="rule"></div></div>
+  <div class="abs" style="left:80px;right:80px;top:300px;display:grid;grid-template-columns:repeat(5,1fr);gap:22px">
+    <div class="glass" style="padding:40px 28px;height:620px;display:flex;flex-direction:column"><div class="num" style="font-size:90px;line-height:1">1</div><svg width="70" height="90" viewBox="0 0 100 130" style="margin:16px 0"><use href="#drop"/></svg><div class="card-h" style="font-size:34px">เลือดเด็กน้อยมาก</div><div style="font-size:27px;color:var(--ice);margin-top:14px;line-height:1.45">10 kg ≈ 700 mL<br>เสีย 350 mL = <b class="hr">50%</b></div></div>
+    <div class="glass" style="padding:40px 28px;height:620px;display:flex;flex-direction:column"><div class="num" style="font-size:90px;line-height:1">2</div><div style="font-size:70px;margin:16px 0">📉</div><div class="card-h" style="font-size:34px">BP ตก = Late sign</div><div style="font-size:27px;color:var(--ice);margin-top:14px;line-height:1.45">ดู HR, CRT, perfusion, urine, lactate</div></div>
+    <div class="glass" style="padding:40px 28px;height:620px;display:flex;flex-direction:column"><div class="num" style="font-size:90px;line-height:1">3</div><div style="font-size:70px;margin:16px 0">🧮</div><div class="card-h" style="font-size:34px">คำนวณก่อนผ่าตัด</div><div style="font-size:27px;color:var(--ice);margin-top:14px;line-height:1.45">EBV · MABL · PRC<br>เตรียมเลือดให้พร้อม</div></div>
+    <div class="glass" style="padding:40px 28px;height:620px;display:flex;flex-direction:column"><div class="num" style="font-size:90px;line-height:1">4</div><div style="font-size:70px;margin:16px 0">🩸</div><div class="card-h" style="font-size:34px">MTP = ระบบ</div><div style="font-size:27px;color:var(--ice);margin-top:14px;line-height:1.45">Balanced · warmed · goal-directed ตามผลตรวจ</div></div>
+    <div class="glass" style="padding:40px 28px;height:620px;display:flex;flex-direction:column;border-color:rgba(231,189,106,.6)"><div class="num" style="font-size:90px;line-height:1">5</div><div style="font-size:70px;margin:16px 0">💎</div><div class="card-h" style="font-size:34px">ตัด Lethal Diamond</div><div style="font-size:27px;color:var(--ice);margin-top:14px;line-height:1.45">อุ่นร่างกาย · แก้ acidosis · ให้ Ca²⁺ · ป้องกัน coagulopathy</div></div>
+  </div>
+</section>
+
+<!-- 28 THANK YOU -->
+<section class="s part nofoot" data-n="">
+  <div class="abs" style="left:120px;top:300px;width:1100px">
+    <div class="kicker" style="color:var(--red-hi)">Pediatric Massive Blood Loss</div>
+    <div class="serif" style="font-weight:800;font-size:170px;line-height:1;color:var(--gold-hi);margin-top:24px;text-shadow:0 10px 40px rgba(0,0,0,.6)">Thank you</div>
+    <div style="font-family:'Prompt';font-size:46px;color:#fff;margin-top:30px">Questions &amp; Discussion</div>
+  </div>
+</section>
+
+</div>
+
+<div id="bar"></div><div id="ctr"></div>
+<div id="hint">← → หรือ คลิก = เปลี่ยนสไลด์ · F = เต็มจอ · G = ดูทุกสไลด์</div>
+<div id="grid"></div>
+
+<script>
+(function(){
+  const slides=[...document.querySelectorAll('.s')];
+  const N=slides.length;
+  // decorate part dividers
+  const cells=`<svg class="abs" style="left:0;top:0" width="1920" height="1080">
+    <use href="#rbc" x="1250" y="120" width="330" height="330" opacity=".95"/>
+    <use href="#rbc" x="1560" y="520" width="260" height="260" opacity=".85"/>
+    <use href="#rbc" x="1180" y="640" width="190" height="190" opacity=".7"/>
+    <use href="#rbc" x="1700" y="110" width="120" height="120" opacity=".55"/>
+    <use href="#rbc" x="1480" y="860" width="110" height="110" opacity=".45"/>
+    <use href="#rbc" x="1040" y="430" width="80" height="80" opacity=".35"/></svg>
+    <svg class="abs ecg" style="left:0;top:900px" width="1920" height="140" viewBox="0 0 1920 140"><path d="M0 70 H760 L790 70 L812 20 L836 125 L860 5 L888 130 L910 70 H1920"/></svg>`;
+  slides.forEach((s,i)=>{
+    if(s.classList.contains('part')){
+      s.insertAdjacentHTML('afterbegin',cells+(s.dataset.n?`<div class="bignum">${s.dataset.n}</div>`:''));
+    }
+    if(!s.classList.contains('nofoot')){
+      s.insertAdjacentHTML('beforeend',`<div class="foot"><span>PEDIATRIC MASSIVE BLOOD LOSS</span><span><i>●</i> ${String(i+1).padStart(2,'0')}</span></div>`);
+    }
+  });
+  // scaling
+  function fit(){const k=Math.min(innerWidth/1920,innerHeight/1080);slides.forEach(s=>s.style.transform=`translate(-50%,-50%) scale(${k})`);}
+  addEventListener('resize',fit);fit();
+  // navigation
+  let cur=Math.min(Math.max((parseInt(location.hash.slice(1))||1)-1,0),N-1);
+  const bar=document.getElementById('bar'),ctr=document.getElementById('ctr');
+  function show(i,fromEnd){
+    cur=Math.min(Math.max(i,0),N-1);
+    slides.forEach((s,j)=>s.classList.toggle('active',j===cur));
+    slides[cur].querySelectorAll('.frag').forEach(f=>f.classList.toggle('on',!!fromEnd));
+    bar.style.width=((cur+1)/N*100)+'%';ctr.textContent=(cur+1)+' / '+N;
+    history.replaceState(null,'','#'+(cur+1));
+  }
+  function next(){const f=slides[cur].querySelector('.frag:not(.on)');if(f){f.classList.add('on');return;}if(cur<N-1)show(cur+1);}
+  function prev(){const on=slides[cur].querySelectorAll('.frag.on');if(on.length){on[on.length-1].classList.remove('on');return;}if(cur>0)show(cur-1,true);}
+  const grid=document.getElementById('grid');
+  slides.forEach((s,i)=>{const t=(s.querySelector('.h1,.ptitle h2,.serif')||{}).textContent||'Cover';
+    const b=document.createElement('button');b.textContent=(i+1)+'. '+t.replace(/\s+/g,' ').trim().slice(0,60);
+    b.onclick=()=>{grid.classList.remove('show');show(i);};grid.appendChild(b);});
+  function toggleGrid(){grid.classList.toggle('show');[...grid.children].forEach((b,i)=>b.classList.toggle('cur',i===cur));}
+  addEventListener('keydown',e=>{
+    if(grid.classList.contains('show')&&e.key!=='g'&&e.key!=='G'&&e.key!=='Escape')return;
+    switch(e.key){
+      case 'ArrowRight':case 'PageDown':case ' ':case 'Enter':case 'ArrowDown':e.preventDefault();next();break;
+      case 'ArrowLeft':case 'PageUp':case 'Backspace':case 'ArrowUp':e.preventDefault();prev();break;
+      case 'Home':show(0);break; case 'End':show(N-1);break;
+      case 'f':case 'F':document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();break;
+      case 'g':case 'G':toggleGrid();break; case 'Escape':grid.classList.remove('show');break;
+    }
+  });
+  document.getElementById('deck').addEventListener('click',e=>{(e.clientX<innerWidth*0.25)?prev():next();});
+  let tx=null;addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+  addEventListener('touchend',e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50)(dx<0?next:prev)();tx=null;});
+  setTimeout(()=>document.getElementById('hint').style.opacity=0,4000);
+  // export helper: ?all=1 shows every fragment
+  if(new URLSearchParams(location.search).has('all'))document.querySelectorAll('.frag').forEach(f=>f.classList.add('on'));
+  show(cur,new URLSearchParams(location.search).has('all'));
+})();
+</script>
+</body>
+</html>
